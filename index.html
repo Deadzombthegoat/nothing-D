@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShKnight Proxy</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <h1>ShKnight Proxy</h1>
+    </header>
+    <main>
+        <h2>Search Google:</h2>
+        <form id="search-form" onsubmit="search(event)">
+            <input type="text" id="query" name="query" placeholder="Enter your search..." required>
+            <button type="submit">Search</button>
+        </form>
+        
+        <h2>Access a Website:</h2>
+        <form id="proxy-form" onsubmit="proxyRequest(event)">
+            <input type="text" id="url" name="url" placeholder="Enter URL" required>
+            <button type="submit">Access</button>
+        </form>
+        
+        <h2>Response:</h2>
+        <div id="response-container"></div> <!-- This is where the proxy content will be displayed -->
+    </main>
+
+    <script>
+        // Function to handle the proxy request
+        async function proxyRequest(event) {
+            event.preventDefault(); // Prevent form submission
+            const url = document.getElementById("url").value;
+            const responseContainer = document.getElementById("response-container");
+
+            try {
+                const response = await fetch(`/api/proxy?url=${encodeURIComponent(url)}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.text();
+                responseContainer.innerHTML = data; // Display the fetched HTML content
+            } catch (error) {
+                responseContainer.innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        // Function to handle the search request
+        async function search(event) {
+            event.preventDefault(); // Prevent form submission
+            const query = document.getElementById("query").value;
+            window.location.href = `/api/search?q=${encodeURIComponent(query)}`; // Redirect to search
+        }
+    </script>
+</body>
+</html>
